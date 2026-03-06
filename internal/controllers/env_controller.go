@@ -58,7 +58,7 @@ func (ec *EnvController) CreateEnvVar(c *gin.Context) {
 // @Tags 环境变量
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param name query string false "按名称模糊查询"
 // @Param page query int false "页码"
 // @Param page_size query int false "每页数量"
@@ -78,7 +78,7 @@ func (ec *EnvController) GetEnvVars(c *gin.Context) {
 // @Tags 环境变量
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Success 200 {object} utils.Response{data=[]vo.EnvVO}
 // @Router /env/all [get]
 func (ec *EnvController) GetAllEnvVars(c *gin.Context) {
@@ -93,7 +93,7 @@ func (ec *EnvController) GetAllEnvVars(c *gin.Context) {
 // @Tags 环境变量
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "环境变量ID"
 // @Success 200 {object} utils.Response{data=vo.EnvVO}
 // @Failure 404 {object} utils.Response
@@ -210,7 +210,7 @@ func (ec *EnvController) DeleteEnvVar(c *gin.Context) {
 // @Tags 环境变量
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "环境变量ID"
 // @Success 200 {object} utils.Response{data=[]vo.TaskVO}
 // @Router /env/{id}/tasks [get]

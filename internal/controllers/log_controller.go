@@ -19,10 +19,10 @@ func NewLogController() *LogController {
 // GetLogs 获取任务日志列表
 // @Summary 获取任务日志列表
 // @Description 分页获取任务日志列表，支持按任务 ID、任务名称、状态筛选
-// @Tags 日志
+// @Tags 日志管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param task_id query string false "任务 ID"
 // @Param task_name query string false "任务名称"
 // @Param status query string false "状态"
@@ -102,10 +102,10 @@ func (lc *LogController) GetLogs(c *gin.Context) {
 // GetLogDetail 获取日志详情
 // @Summary 获取日志详情
 // @Description 根据 ID 获取任务日志详细内容（包含输出）
-// @Tags 日志
+// @Tags 日志管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "日志ID"
 // @Success 200 {object} utils.Response{data=vo.TaskLogVO}
 // @Failure 404 {object} utils.Response

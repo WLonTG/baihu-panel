@@ -24,11 +24,6 @@ func AuthRequired() gin.HandlerFunc {
 			return
 		}
 
-		// 校验 OpenAPI Token
-		if checkOpenapiToken(c, settingsSvc) {
-			return
-		}
-
 		token, err := c.Cookie(constant.CookieName)
 		if err != nil || token == "" {
 			utils.Unauthorized(c, "请先登录")
@@ -111,14 +106,40 @@ func checkApiToken(c *gin.Context, settingsSvc *services.SettingsService) bool {
 	return true
 }
 
+// OpenapiRequired OpenAPI 认证中间件
+func OpenapiRequired() gin.HandlerFunc {
+	settingsSvc := services.NewSettingsService()
+	return func(c *gin.Context) {
+		if checkOpenapiToken(c, settingsSvc) {
+			return
+		}
+		utils.Unauthorized(c, "无效的 OpenAPI 令牌")
+		c.Abort()
+	}
+}
+
 // checkOpenapiToken 校验 OpenAPI Token
 // 返回 true 表示校验通过并已放行请求
 func checkOpenapiToken(c *gin.Context, settingsSvc *services.SettingsService) bool {
 	authHeader := c.GetHeader("Authorization")
-	if authHeader == "" || len(authHeader) < 8 || authHeader[:7] != "Bearer " {
+	if authHeader == "" {
 		return false
 	}
-	openapiToken := authHeader[7:]
+
+	// 提取 token：支持 "Bearer <token>" 和直接 "<token>" 两种格式
+	var openapiToken string
+	if len(authHeader) > 7 && authHeader[:7] == "Bearer " {
+		// 标准格式：Bearer <token>
+		openapiToken = authHeader[7:]
+	} else {
+		// 直接使用 token
+		openapiToken = authHeader
+	}
+
+	// Token 不能为空
+	if openapiToken == "" {
+		return false
+	}
 
 	siteConfig := settingsSvc.GetSection(constant.SectionSite)
 	tokenJson, ok := siteConfig[constant.KeyOpenapiToken]

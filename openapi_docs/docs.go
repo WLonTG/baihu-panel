@@ -28,7 +28,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "分页获取环境变量列表，支持按名称筛选",
@@ -68,7 +68,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -81,7 +81,7 @@ const docTemplate = `{
                                                 {
                                                     "type": "object",
                                                     "properties": {
-                                                        "list": {
+                                                        "data": {
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/definitions/vo.EnvVO"
@@ -132,7 +132,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -148,7 +148,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -158,7 +158,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "获取当前用户的所有环境变量（不分页）",
@@ -178,7 +178,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -201,7 +201,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据 ID 获取环境变量详情",
@@ -230,7 +230,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -246,7 +246,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -292,7 +292,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -308,7 +308,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -349,7 +349,7 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     },
                     "409": {
@@ -357,7 +357,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -380,7 +380,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "获取引用了该环境变量的任务列表",
@@ -409,7 +409,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -463,7 +463,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -479,7 +479,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -489,7 +489,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "获取最新任务或命令执行的结果列表",
@@ -517,7 +517,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -540,7 +540,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "立即执行指定的任务",
@@ -551,7 +551,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务执行"
                 ],
                 "summary": "运行任务",
                 "parameters": [
@@ -577,7 +577,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -593,7 +593,7 @@ const docTemplate = `{
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -603,7 +603,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "分页获取任务日志列表，支持按任务 ID、任务名称、状态筛选",
@@ -614,7 +614,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "日志"
+                    "日志管理"
                 ],
                 "summary": "获取任务日志列表",
                 "parameters": [
@@ -655,7 +655,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -668,7 +668,7 @@ const docTemplate = `{
                                                 {
                                                     "type": "object",
                                                     "properties": {
-                                                        "list": {
+                                                        "data": {
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/definitions/vo.TaskLogVO"
@@ -718,13 +718,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -734,7 +734,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据 ID 获取任务日志详细内容（包含输出）",
@@ -745,7 +745,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "日志"
+                    "日志管理"
                 ],
                 "summary": "获取日志详情",
                 "parameters": [
@@ -763,7 +763,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -779,7 +779,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -814,13 +814,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     },
                     "500": {
                         "description": "Internal Server Error",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -830,7 +830,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "分页获取任务列表，支持按名称、Agent ID、标签、类型筛选",
@@ -841,7 +841,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务管理"
                 ],
                 "summary": "获取任务列表",
                 "parameters": [
@@ -888,7 +888,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -901,7 +901,7 @@ const docTemplate = `{
                                                 {
                                                     "type": "object",
                                                     "properties": {
-                                                        "list": {
+                                                        "data": {
                                                             "type": "array",
                                                             "items": {
                                                                 "$ref": "#/definitions/vo.TaskVO"
@@ -923,7 +923,7 @@ const docTemplate = `{
             "post": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据运行日志 ID 停止正在执行的任务",
@@ -934,7 +934,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务管理"
                 ],
                 "summary": "停止任务",
                 "parameters": [
@@ -950,13 +950,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     },
                     "400": {
                         "description": "Bad Request",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -966,7 +966,7 @@ const docTemplate = `{
             "get": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据 ID 获取任务详情",
@@ -977,7 +977,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务管理"
                 ],
                 "summary": "获取任务详情",
                 "parameters": [
@@ -995,7 +995,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1011,7 +1011,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -1019,7 +1019,7 @@ const docTemplate = `{
             "put": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据 ID 更新任务信息",
@@ -1030,7 +1030,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务管理"
                 ],
                 "summary": "更新任务",
                 "parameters": [
@@ -1057,7 +1057,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/utils.Response"
+                                    "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                                 },
                                 {
                                     "type": "object",
@@ -1073,7 +1073,7 @@ const docTemplate = `{
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -1081,7 +1081,7 @@ const docTemplate = `{
             "delete": {
                 "security": [
                     {
-                        "ApiKeyAuth": []
+                        "BearerAuth": []
                     }
                 ],
                 "description": "根据 ID 删除任务",
@@ -1092,7 +1092,7 @@ const docTemplate = `{
                     "application/json"
                 ],
                 "tags": [
-                    "任务"
+                    "任务管理"
                 ],
                 "summary": "删除任务",
                 "parameters": [
@@ -1108,13 +1108,13 @@ const docTemplate = `{
                     "200": {
                         "description": "OK",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     },
                     "404": {
                         "description": "Not Found",
                         "schema": {
-                            "$ref": "#/definitions/utils.Response"
+                            "$ref": "#/definitions/github_com_engigu_baihu-panel_internal_utils.Response"
                         }
                     }
                 }
@@ -1122,22 +1122,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "utils.PaginationData": {
-            "type": "object",
-            "properties": {
-                "list": {},
-                "page": {
-                    "type": "integer"
-                },
-                "page_size": {
-                    "type": "integer"
-                },
-                "total": {
-                    "type": "integer"
-                }
-            }
-        },
-        "utils.Response": {
+        "github_com_engigu_baihu-panel_internal_utils.Response": {
             "type": "object",
             "properties": {
                 "code": {
@@ -1146,6 +1131,21 @@ const docTemplate = `{
                 "data": {},
                 "msg": {
                     "type": "string"
+                }
+            }
+        },
+        "utils.PaginationData": {
+            "type": "object",
+            "properties": {
+                "data": {},
+                "page": {
+                    "type": "integer"
+                },
+                "page_size": {
+                    "type": "integer"
+                },
+                "total": {
+                    "type": "integer"
                 }
             }
         },
@@ -1336,7 +1336,8 @@ const docTemplate = `{
         }
     },
     "securityDefinitions": {
-        "ApiKeyAuth": {
+        "BearerAuth": {
+            "description": "Type \"Bearer\" followed by a space and the API token.",
             "type": "apiKey",
             "name": "Authorization",
             "in": "header"
@@ -1348,10 +1349,10 @@ const docTemplate = `{
 var SwaggerInfo = &swag.Spec{
 	Version:          "1.0",
 	Host:             "localhost:8052",
-	BasePath:         "/api/v1",
+	BasePath:         "/open2api/v1",
 	Schemes:          []string{},
 	Title:            "Baihu Panel API",
-	Description:      "Baihu Panel API Server documentation.",
+	Description:      "Baihu Panel OpenAPI Server documentation.",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

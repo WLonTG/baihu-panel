@@ -21,10 +21,10 @@ func NewExecutorController(executorService *tasks.ExecutorService) *ExecutorCont
 // ExecuteTask 运行任务
 // @Summary 运行任务
 // @Description 立即执行指定的任务
-// @Tags 任务
+// @Tags 任务执行
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "任务ID"
 // @Param body body object false "执行参数 (envs: 环境变量字典)"
 // @Success 200 {object} utils.Response{data=vo.ExecutionResultVO}
@@ -85,7 +85,7 @@ func (ec *ExecutorController) ExecuteCommand(c *gin.Context) {
 // @Tags 任务执行
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param count query int false "数量 (默认 10)"
 // @Success 200 {object} utils.Response{data=[]vo.ExecutionResultVO}
 // @Router /execute/results [get]

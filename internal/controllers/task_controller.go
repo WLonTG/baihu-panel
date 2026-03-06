@@ -108,10 +108,10 @@ func (tc *TaskController) CreateTask(c *gin.Context) {
 // GetTasks 获取任务列表
 // @Summary 获取任务列表
 // @Description 分页获取任务列表，支持按名称、Agent ID、标签、类型筛选
-// @Tags 任务
+// @Tags 任务管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param name query string false "任务名称"
 // @Param agent_id query string false "Agent ID"
 // @Param tags query string false "标签"
@@ -140,10 +140,10 @@ func (tc *TaskController) GetTasks(c *gin.Context) {
 // GetTask 获取任务详情
 // @Summary 获取任务详情
 // @Description 根据 ID 获取任务详情
-// @Tags 任务
+// @Tags 任务管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "任务ID"
 // @Success 200 {object} utils.Response{data=vo.TaskVO}
 // @Failure 404 {object} utils.Response
@@ -167,10 +167,10 @@ func (tc *TaskController) GetTask(c *gin.Context) {
 // UpdateTask 更新任务
 // @Summary 更新任务
 // @Description 根据 ID 更新任务信息
-// @Tags 任务
+// @Tags 任务管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "任务ID"
 // @Param body body object true "任务更新信息"
 // @Success 200 {object} utils.Response{data=vo.TaskVO}
@@ -262,10 +262,10 @@ func (tc *TaskController) UpdateTask(c *gin.Context) {
 // DeleteTask 删除任务
 // @Summary 删除任务
 // @Description 根据 ID 删除任务
-// @Tags 任务
+// @Tags 任务管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param id path string true "任务ID"
 // @Success 200 {object} utils.Response
 // @Failure 404 {object} utils.Response
@@ -303,10 +303,10 @@ func (tc *TaskController) DeleteTask(c *gin.Context) {
 // StopTask 停止任务
 // @Summary 停止任务
 // @Description 根据运行日志 ID 停止正在执行的任务
-// @Tags 任务
+// @Tags 任务管理
 // @Accept json
 // @Produce json
-// @Security ApiKeyAuth
+// @Security BearerAuth
 // @Param logID path string true "运行日志ID"
 // @Success 200 {object} utils.Response
 // @Failure 400 {object} utils.Response

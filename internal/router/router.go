@@ -77,6 +77,7 @@ func Setup(c *Controllers) *gin.Engine {
 	initPublicAPIRoutes(apiV1, c)
 	initAuthorizedAPIRoutes(apiV1, c)
 	initAgentAPIRoutes(root, c)
+	initOpenAPIV1Routes(root, c)
 
 	// SPA 兜底路由 - 返回 index.html（HTML禁用缓存以保证实时同步）
 	// 必须在最后注册，作为兜底路由
@@ -332,7 +333,7 @@ func registerLogRoutes(g *gin.RouterGroup, c *Controllers) {
 
 func registerTerminalRoutes(g *gin.RouterGroup, c *Controllers) {
 	g.GET("/terminal/ws", c.Terminal.HandleWebSocket)
-	g.POST("/terminal/exec", c.Terminal.ExecuteShellCommand)
+	// g.POST("/terminal/exec", c.Terminal.ExecuteShellCommand) // 暂未使用，已注释
 	g.GET("/terminal/cmds", c.Terminal.GetCommands)
 }
 

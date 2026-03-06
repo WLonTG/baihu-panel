@@ -12,7 +12,7 @@ import (
 
 // @title Baihu Panel API
 // @version 1.0
-// @description Baihu Panel API Server documentation.
+// @description Baihu Panel OpenAPI Server documentation.
 // @termsOfService http://swagger.io/terms/
 
 // @contact.name API Support
@@ -23,12 +23,13 @@ import (
 // @license.url http://www.apache.org/licenses/LICENSE-2.0.html
 
 // @host localhost:8052
-// @BasePath /api/v1
+// @BasePath /open2api/v1
 // @query.collection.format multi
 
-// @securityDefinitions.apikey ApiKeyAuth
+// @securityDefinitions.apikey BearerAuth
 // @in header
 // @name Authorization
+// @description Type "Bearer" followed by a space and the API token.
 
 func printHelp() {
 	fmt.Println("Usage: baihu <command> [arguments]")
