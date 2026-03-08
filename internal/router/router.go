@@ -12,10 +12,9 @@ import (
 	"github.com/engigu/baihu-panel/internal/models/vo"
 	"github.com/engigu/baihu-panel/internal/services"
 	"github.com/engigu/baihu-panel/internal/static"
+	"github.com/engigu/baihu-panel/openapi_docs"
 
 	"github.com/gin-gonic/gin"
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
 type Controllers struct {
@@ -132,9 +131,6 @@ func initStaticRoutes(root *gin.RouterGroup) {
 }
 
 func initOpenAPIRoutes(root *gin.RouterGroup, urlPrefix string) {
-	// 预先创建 Swagger Handler，避免重复解析 docs.go 导致内存尖峰
-	swagHandler := ginSwagger.WrapHandler(swaggerFiles.Handler, ginSwagger.URL(urlPrefix+"/openapi/doc.json"))
-
 	// OpenAPI documentation using Scalar UI (带 Basic Auth 认证)
 	root.GET("/openapi/*any", func(c *gin.Context) {
 		settingsSvc := services.NewSettingsService()
@@ -198,10 +194,11 @@ func initOpenAPIRoutes(root *gin.RouterGroup, urlPrefix string) {
 			return
 		}
 
-		// 3. 提供给 Scalar/Swagger 使用的 doc.json 内容
+		// 3. 提供给 Scalar/Swagger 使用 host 环境变量后的 doc.json 内容
 		if path == "doc.json" {
-			// 使用预先创建并缓存的 handler
-			swagHandler(c)
+			doc := openapi_docs.SwaggerInfo.ReadDoc()
+			c.Header("Content-Type", "application/json; charset=utf-8")
+			c.String(http.StatusOK, doc)
 			return
 		}
 
