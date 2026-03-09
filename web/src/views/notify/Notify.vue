@@ -76,6 +76,7 @@ const channelConfigFields: Record<string, { key: string; label: string; required
   ],
   Custom: [
     { key: 'webhook', label: 'Webhook URL', required: true, placeholder: 'https://...' },
+    { key: 'headers', label: '请求头', required: false, placeholder: 'JSON格式，如 {"Authorization": "Bearer ..."}', type: 'textarea' },
     { key: 'body', label: '请求体模板', required: false, placeholder: '使用 TEXT 作为消息内容占位符', type: 'textarea' },
   ],
   Ntfy: [
