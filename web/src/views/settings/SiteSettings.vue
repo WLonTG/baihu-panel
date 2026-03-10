@@ -233,19 +233,19 @@ onMounted(loadSettings)
     </div>
 
     <div class="pt-6 border-t mt-6">
-      <div class="flex items-center justify-between mb-4">
+      <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0 mb-4">
         <div class="flex items-center gap-2">
-          <h3 class="text-lg font-medium text-foreground">OpenAPI Token</h3>
+          <h3 class="text-lg font-medium text-foreground whitespace-nowrap">OpenAPI Token</h3>
           <Badge variant="secondary"
-            class="font-normal text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20">推荐方式</Badge>
+            class="font-normal text-xs bg-blue-500/10 text-blue-600 dark:text-blue-400 border-blue-500/20 whitespace-nowrap">推荐方式</Badge>
         </div>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center justify-between sm:justify-end w-full sm:w-auto gap-4">
           <a :href="baseUrl + '/openapi/index.html'" target="_blank"
-            class="flex items-center gap-1 text-xs text-blue-600 hover:underline">
+            class="flex items-center gap-1 text-xs text-blue-600 hover:underline shrink-0">
             查看接口文档
             <ExternalLink class="w-3 h-3" />
           </a>
-          <div class="flex items-center gap-2">
+          <div class="flex items-center gap-2 shrink-0">
             <Switch v-model="form.openapi_enabled" id="openapi-enabled" />
             <Label for="openapi-enabled" class="text-xs cursor-pointer">开启鉴权</Label>
           </div>
