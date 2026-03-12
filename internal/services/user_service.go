@@ -57,6 +57,14 @@ func (us *UserService) GetUserByUsername(username string) *models.User {
 	return &user
 }
 
+func (us *UserService) GetUserByID(id string) (*models.User, error) {
+	var user models.User
+	if err := database.DB.Where("id = ?", id).First(&user).Error; err != nil {
+		return nil, err
+	}
+	return &user, nil
+}
+
 func (us *UserService) ValidatePassword(user *models.User, password string) bool {
 	// 尝试 bcrypt 校验
 	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))

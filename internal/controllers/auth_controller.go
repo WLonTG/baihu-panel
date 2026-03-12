@@ -169,8 +169,8 @@ func (ac *AuthController) Logout(c *gin.Context) {
 
 func (ac *AuthController) GetCurrentUser(c *gin.Context) {
 	userID := c.GetString("userID")
-	var user models.User
-	if err := database.DB.Where("id = ?", userID).First(&user).Error; err != nil {
+	user, err := ac.userService.GetUserByID(userID)
+	if err != nil {
 		utils.Unauthorized(c, "会话无效")
 		return
 	}
