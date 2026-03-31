@@ -63,11 +63,7 @@ import { decompressFromBase64 } from '@/utils/decompress'
 
 const decompressedOutput = computed(() => {
   if (!wsContent.value) return '无输出'
-  // 检查是否是 base64 (尝试性，如果开头是 eJ 且长度较大，很可能是压缩后的)
-  if (wsContent.value.length > 20 && wsContent.value.startsWith('eJ')) {
-    return decompressFromBase64(wsContent.value)
-  }
-  return wsContent.value
+  return decompressFromBase64(wsContent.value)
 })
 
 async function loadLogs() {

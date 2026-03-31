@@ -251,10 +251,7 @@ import { decompressFromBase64 } from '@/utils/decompress'
 
 const displayLogContent = computed(() => {
   if (!logContent.value) return '无输出'
-  if (latestLogStatus.value !== TASK_STATUS.RUNNING && logContent.value.length > 20 && logContent.value.startsWith('eJ')) {
-    return decompressFromBase64(logContent.value)
-  }
-  return logContent.value
+  return decompressFromBase64(logContent.value)
 })
 
 async function viewLogs(taskId: string) {
