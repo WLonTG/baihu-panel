@@ -89,6 +89,7 @@ WORKDIR /app
 COPY --from=build-info /build-info /build-info
 
 # Using Go build cache mount
+COPY go.mod go.sum ./
 RUN --mount=type=cache,target=/go/pkg/mod \
     go mod download
 
