@@ -171,8 +171,8 @@ onMounted(() => {
         </header>
   
         <!-- Page View Container -->
-        <div class="flex-1 overflow-auto relative bg-background/50">
-          <div class="p-4 lg:p-6 mx-auto">
+        <div class="flex-1 relative bg-background/50 flex flex-col overflow-hidden">
+          <div class="flex-1 p-4 lg:p-6 mx-auto w-full overflow-y-auto custom-scrollbar flex flex-col">
             <RouterView />
           </div>
         </div>
