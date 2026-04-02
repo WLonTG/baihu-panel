@@ -124,37 +124,69 @@ onMounted(loadLogs)
             </div>
         </div>
 
-        <div class="rounded-lg border bg-card overflow-x-auto">
-            <!-- 表头 -->
+        <div class="rounded-lg border bg-card overflow-hidden">
+            <!-- 大屏表头 -->
             <div
-                class="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 border-b bg-muted/50 text-xs sm:text-sm text-muted-foreground font-medium sm:min-w-[500px]">
-                <span class="w-16 sm:w-24 shrink-0">用户名</span>
-                <span class="w-20 sm:w-32 shrink-0">IP 地址</span>
-                <span class="w-10 sm:w-16 shrink-0 text-center">状态</span>
-                <span class="hidden sm:flex sm:flex-1">User Agent</span>
-                <span class="shrink-0 sm:w-40 sm:text-right">时间</span>
+                class="hidden sm:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+                <span class="w-16 shrink-0 pl-1">序号</span>
+                <span class="w-24 sm:w-32 shrink-0">用户名</span>
+                <span class="w-32 sm:w-40 shrink-0">IP 地址</span>
+                <span class="w-16 shrink-0 text-center">状态</span>
+                <span class="flex-1 min-w-0">User Agent</span>
+                <span class="w-40 shrink-0 text-right">登录时间</span>
             </div>
+
             <!-- 列表 -->
-            <div class="divide-y sm:min-w-[500px]">
+            <div class="divide-y">
                 <div v-if="logs.length === 0" class="text-sm text-muted-foreground text-center py-8">
                     暂无登录日志
                 </div>
-                <div v-for="log in logs" :key="log.id"
-                    class="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 hover:bg-muted/50 transition-colors">
-                    <span class="w-16 sm:w-24 shrink-0 font-medium text-xs sm:text-sm truncate">{{ log.username
-                    }}</span>
-                    <code
-                        class="w-20 sm:w-32 shrink-0 text-xs text-muted-foreground bg-muted px-1 sm:px-2 py-0.5 sm:py-1 rounded truncate cursor-pointer hover:bg-muted/80 transition-colors"
-                        @click="showIpInfo(log.ip)">{{ log.ip }}</code>
-                    <span class="w-10 sm:w-16 shrink-0 flex justify-center">
+
+                <!-- 小屏卡片布局 -->
+                <div v-for="(log, index) in logs" :key="`mobile-${log.id}`"
+                    class="sm:hidden p-3 hover:bg-muted/50 transition-colors">
+                    <div class="flex items-start justify-between mb-3 border-b border-border/40 pb-2">
+                        <div class="flex items-center gap-2 flex-1 min-w-0 mr-2">
+                            <span class="text-xs text-muted-foreground shrink-0">#{{ total - (currentPage - 1) * pageSize - index }}</span>
+                            <span class="font-bold text-sm truncate">{{ log.username }}</span>
+                        </div>
+                        <span
+                            :class="['h-2 w-2 mt-1.5 rounded-full shrink-0', log.status === 'success' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.4)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.4)]']"></span>
+                    </div>
+
+                    <!-- 详情信息列表 -->
+                    <div class="space-y-1.5 text-xs text-muted-foreground mb-1 px-1">
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 shrink-0 font-medium opacity-70">IP:</span>
+                            <span
+                                class="text-foreground bg-muted/40 px-1.5 py-0.5 rounded cursor-pointer hover:bg-muted/80 transition-colors"
+                                @click="showIpInfo(log.ip)">{{ log.ip }}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            <span class="w-8 shrink-0 font-medium opacity-70">时间:</span>
+                            <span class="text-muted-foreground">{{ log.created_at }}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 大屏行布局 -->
+                <div v-for="(log, index) in logs" :key="`desktop-${log.id}`"
+                    class="hidden sm:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors">
+                    <span class="w-16 shrink-0 text-muted-foreground text-sm pl-1">#{{ total - (currentPage - 1) * pageSize - index }}</span>
+                    <span class="w-24 sm:w-32 shrink-0 font-medium text-sm truncate">{{ log.username }}</span>
+                    <div class="w-32 sm:w-40 shrink-0">
+                        <code
+                            class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded truncate cursor-pointer hover:bg-muted/80 transition-colors inline-block"
+                            @click="showIpInfo(log.ip)">{{ log.ip }}</code>
+                    </div>
+                    <span class="w-16 shrink-0 flex justify-center">
                         <span
                             :class="['h-2 w-2 rounded-full', log.status === 'success' ? 'bg-green-500' : 'bg-red-500']"></span>
                     </span>
-                    <span class="hidden sm:flex sm:flex-1 text-xs text-muted-foreground truncate">
+                    <span class="flex-1 min-w-0 text-xs text-muted-foreground truncate">
                         <TextOverflow :text="log.user_agent || '-'" title="User Agent" />
                     </span>
-                    <span class="shrink-0 sm:w-40 sm:text-right text-xs text-muted-foreground">{{ log.created_at
-                    }}</span>
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground">{{ log.created_at }}</span>
                 </div>
             </div>
             <!-- 分页 -->

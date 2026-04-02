@@ -413,7 +413,7 @@ func (s *NotificationService) handleEvent(bindingType string) eventbus.Handler {
 					if len(logSnippet) > extra.LogLimit {
 						logSnippet = "...\n" + logSnippet[len(logSnippet)-extra.LogLimit:]
 					}
-					currentText += "\n\n【执行日志】\n" + logSnippet
+					currentText += "\n\n[执行日志]\n" + logSnippet
 				}
 			}
 

@@ -400,56 +400,129 @@ watch(() => route.query.agent_id, (newVal: any) => {
       </div>
     </div>
 
-    <div class="rounded-lg border bg-card overflow-x-auto">
-      <!-- 表头 -->
+    <div class="rounded-lg border bg-card">
+      <!-- 大屏表头 -->
       <div
-        class="flex flex-wrap sm:flex-nowrap items-center gap-x-2 gap-y-2 sm:gap-4 px-3 sm:px-4 py-2 sm:py-1.5 border-b bg-muted/20 text-xs sm:text-sm text-muted-foreground font-medium min-w-0 sm:min-w-[1000px]">
-        <div class="w-10 sm:w-12 shrink-0 flex items-center gap-2 max-sm:order-1 pl-1">
-          <span class="text-xs sm:text-sm">序号</span>
-        </div>
-        <span class="w-8 shrink-0 text-center max-sm:order-2">类型</span>
-        <span class="flex-1 min-w-0 sm:flex-none sm:w-40 md:w-48 lg:w-56 shrink-0 max-sm:order-3">名称</span>
-        <span class="w-24 sm:w-32 shrink-0 hidden md:block">执行位置</span>
-        <span class="w-8 shrink-0 text-center max-sm:order-4 max-sm:ml-auto">状态</span>
-
-        <div class="w-full hidden max-sm:block max-sm:order-5 mt-1 border-t border-muted/10 opacity-50"></div>
-
-        <span class="flex-1 min-w-[120px] max-sm:order-6 block sm:block max-sm:mt-1 flex items-center gap-1.5">
-          <Terminal class="h-3.5 w-3.5 sm:hidden opacity-50" />命令/地址
+        class="hidden sm:flex items-center gap-4 px-4 py-1.5 border-b bg-muted/20 text-xs text-muted-foreground font-medium">
+        <span class="w-12 shrink-0 pl-1">序号</span>
+        <span class="w-8 shrink-0 text-center">类型</span>
+        <span class="w-40 md:w-48 lg:w-56 shrink-0">名称</span>
+        <span class="w-32 shrink-0 hidden md:block">执行位置</span>
+        <span class="w-8 shrink-0 text-center">状态</span>
+        <span class="flex-1 min-w-0 flex items-center gap-1.5">
+          <Terminal class="h-3.5 w-3.5 opacity-50" />命令/地址
         </span>
         <span class="w-28 shrink-0 hidden md:block">定时规则</span>
         <span class="w-40 shrink-0 hidden lg:block">执行时间</span>
-        <span class="w-28 sm:w-32 shrink-0 text-right sm:text-center max-sm:order-7 max-sm:mt-1">操作</span>
+        <span class="w-36 shrink-0 text-center">操作</span>
       </div>
-      <!-- 列表 -->
-      <div class="divide-y min-w-0 sm:min-w-[1000px]">
+
+      <div class="divide-y">
         <div v-if="tasks.length === 0" class="text-sm text-muted-foreground text-center py-8">
           暂无任务
         </div>
-        <div v-for="(task, index) in tasks" :key="task.id"
-          class="flex flex-wrap sm:flex-nowrap items-center gap-x-2 gap-y-2 sm:gap-4 px-3 sm:px-4 py-2.5 sm:py-1.5 hover:bg-muted/30 transition-colors">
-          <div class="w-10 sm:w-12 shrink-0 flex items-center gap-2 max-sm:order-1 pl-1">
-            <span class="text-muted-foreground text-xs sm:text-sm">#{{ total -
-              (currentPage - 1) * pageSize - index }}</span>
+
+        <!-- 小屏卡片布局 -->
+        <div v-for="(task, index) in tasks" :key="`mobile-${task.id}`"
+          class="sm:hidden p-3 hover:bg-muted/50 transition-colors">
+          <!-- 标题行 -->
+          <div class="flex items-start justify-between mb-3 border-b border-border/40 pb-2">
+            <div class="flex items-center gap-2 flex-1 min-w-0 pr-2">
+              <span class="text-xs text-muted-foreground tabular-nums flex-shrink-0">#{{ total - (currentPage - 1) * pageSize - index }}</span>
+              <span class="shrink-0" :title="getTaskTypeTitle(task.type || 'task')">
+                <GitBranch v-if="task.type === TASK_TYPE.REPO" class="h-3.5 w-3.5 text-primary" />
+                <Terminal v-else class="h-3.5 w-3.5 text-primary" />
+              </span>
+              <span class="font-bold text-sm truncate" :title="task.name">{{ task.name }}</span>
+            </div>
+            <div class="flex items-center gap-2 shrink-0">
+              <span class="cursor-pointer group"
+                @click="toggleTask(task, !task.enabled)"
+                :title="task.enabled ? '点击禁用' : '点击启用'">
+                <div v-if="task.enabled"
+                  class="h-6 w-6 rounded-md bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+                  <Zap class="h-3.5 w-3.5 text-green-500 fill-green-500" />
+                </div>
+                <div v-else
+                  class="h-6 w-6 rounded-md bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
+                  <ZapOff class="h-3.5 w-3.5 text-muted-foreground" />
+                </div>
+              </span>
+            </div>
           </div>
-          <span class="w-8 shrink-0 flex justify-center max-sm:order-2" :title="getTaskTypeTitle(task.type || 'task')">
-            <GitBranch v-if="task.type === TASK_TYPE.REPO" class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
-            <Terminal v-else class="h-3.5 w-3.5 sm:h-4 sm:w-4 text-primary" />
+
+          <!-- 详情信息列表 -->
+          <div class="space-y-1.5 text-xs text-muted-foreground mb-3 px-1">
+            <div class="flex items-center gap-3">
+              <span class="w-10 shrink-0 font-medium opacity-70">定时:</span>
+              <span v-if="task.trigger_type === TRIGGER_TYPE.BAIHU_STARTUP"
+                class="text-[10px] leading-tight bg-blue-500/10 text-blue-500 px-1.5 py-0.5 rounded font-medium">服务启动时</span>
+              <span v-else-if="task.schedule" class="text-xs text-foreground bg-muted/40 px-1.5 py-0.5 rounded">{{ task.schedule }}</span>
+              <span v-else class="text-muted-foreground opacity-50">-</span>
+            </div>
+            <div class="flex items-start gap-3">
+              <span class="w-10 shrink-0 font-medium mt-0.5 opacity-70">命令:</span>
+              <div class="flex-1 min-w-0 overflow-hidden text-foreground">
+                <TextOverflow :text="task.command" :title="task.type === TASK_TYPE.REPO ? '同步地址' : '执行命令'" class="truncate opacity-80" />
+              </div>
+            </div>
+            <div v-if="task.tags" class="flex items-start gap-3">
+              <span class="w-10 shrink-0 font-medium mt-0.5 opacity-70">标签:</span>
+              <div class="flex flex-wrap gap-1 flex-1">
+                <span v-for="tag in task.tags.split(',').filter(Boolean)" :key="tag"
+                  class="text-[9px] leading-none px-1.5 py-0.5 bg-primary/10 text-primary/80 rounded-full border border-primary/20 font-semibold">
+                  {{ tag }}
+                </span>
+              </div>
+            </div>
+            <div v-if="task.remark" class="flex items-start gap-3">
+              <span class="w-10 shrink-0 font-medium mt-0.5 opacity-70">备注:</span>
+              <span class="flex-1 text-[11px] truncate">{{ task.remark }}</span>
+            </div>
+          </div>
+
+          <!-- 操作按钮行 -->
+          <div class="flex items-center justify-end gap-0.5 pt-2 border-t border-border/40">
+            <Button variant="ghost" class="h-7 px-1.5 text-[10px] gap-1" @click="runTask(task.id)" title="执行" :disabled="executingTaskId === task.id">
+              <Loader2 v-if="executingTaskId === task.id" class="h-3 w-3 animate-spin" />
+              <Play v-else class="h-3 w-3" />执行
+            </Button>
+            <Button variant="ghost" class="h-7 px-1.5 text-[10px] gap-1" @click="viewLogs(task.id)" title="日志">
+              <ScrollText class="h-3 w-3" />日志
+            </Button>
+            <Button variant="ghost" class="h-7 px-1.5 text-[10px] gap-1" @click="openEdit(task)" title="编辑">
+              <Pencil class="h-3 w-3" />编辑
+            </Button>
+            <Button variant="ghost" class="h-7 px-1.5 text-[10px] gap-1" @click="duplicateTask(task)" title="克隆">
+              <Copy class="h-3 w-3" />克隆
+            </Button>
+            <Button variant="ghost" class="h-7 px-1.5 text-[10px] gap-1 text-destructive" @click="confirmDelete(task.id)" title="删除">
+              <Trash2 class="h-3 w-3" />删除
+            </Button>
+          </div>
+        </div>
+
+        <!-- 大屏行布局 -->
+        <div v-for="(task, index) in tasks" :key="`desktop-${task.id}`"
+          class="hidden sm:flex items-center gap-4 px-4 py-1.5 hover:bg-muted/30 transition-colors">
+          <div class="w-12 shrink-0 pl-1">
+            <span class="text-muted-foreground text-sm">#{{ total - (currentPage - 1) * pageSize - index }}</span>
+          </div>
+          <span class="w-8 shrink-0 flex justify-center" :title="getTaskTypeTitle(task.type || 'task')">
+            <GitBranch v-if="task.type === TASK_TYPE.REPO" class="h-4 w-4 text-primary" />
+            <Terminal v-else class="h-4 w-4 text-primary" />
           </span>
-          <div
-            class="flex-1 min-w-0 sm:flex-none sm:w-40 md:w-48 lg:w-56 shrink-0 flex flex-col justify-center gap-0.5 overflow-hidden max-sm:order-3">
-            <span class="font-medium truncate text-xs sm:text-sm cursor-help block w-full" :title="task.name">{{
-              task.name }}</span>
+          <div class="w-40 md:w-48 lg:w-56 shrink-0 flex flex-col justify-center gap-0.5 overflow-hidden">
+            <span class="font-medium truncate text-sm cursor-help" :title="task.name">{{ task.name }}</span>
             <div v-if="task.tags" class="flex items-center gap-1 overflow-hidden" :title="task.tags">
               <span v-for="tag in task.tags.split(',').filter(Boolean).slice(0, 3)" :key="tag"
                 class="truncate text-[10px] leading-none px-1 py-0.5 bg-secondary text-secondary-foreground rounded border">
                 {{ tag }}
               </span>
-              <span v-if="task.tags.split(',').filter(Boolean).length > 3"
-                class="text-[10px] text-muted-foreground">...</span>
+              <span v-if="task.tags.split(',').filter(Boolean).length > 3" class="text-[10px] text-muted-foreground">...</span>
             </div>
           </div>
-          <span class="w-24 sm:w-32 shrink-0 hidden md:flex items-center gap-1 text-xs" :title="getExecutorName(task)">
+          <span class="w-32 shrink-0 hidden md:flex items-center gap-1 text-xs" :title="getExecutorName(task)">
             <Monitor v-if="!task.agent_id" class="h-3 w-3 text-muted-foreground" />
             <template v-else>
               <Wifi v-if="getExecutorStatus(task) === 'online'" class="h-3 w-3 text-green-500" />
@@ -457,11 +530,20 @@ watch(() => route.query.agent_id, (newVal: any) => {
             </template>
             <span class="truncate">{{ getExecutorName(task) }}</span>
           </span>
-
-          <code
-            class="flex-1 min-w-[120px] text-muted-foreground truncate text-xs bg-muted/40 px-2 py-1 rounded block sm:block max-sm:order-6 overflow-hidden max-sm:mt-1">
-  <TextOverflow :text="task.command" :title="task.type === TASK_TYPE.REPO ? '同步地址' : '执行命令'" class="truncate" />
-</code>
+          <span class="w-8 flex justify-center shrink-0 cursor-pointer group"
+            @click="toggleTask(task, !task.enabled)" :title="task.enabled ? '点击禁用' : '点击启用'">
+            <div v-if="task.enabled"
+              class="h-6 w-6 rounded-md bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
+              <Zap class="h-3.5 w-3.5 text-green-500 fill-green-500" />
+            </div>
+            <div v-else
+              class="h-6 w-6 rounded-md bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
+              <ZapOff class="h-3.5 w-3.5 text-muted-foreground" />
+            </div>
+          </span>
+          <code class="flex-1 min-w-0 text-muted-foreground truncate text-xs bg-muted/40 px-2 py-1 rounded overflow-hidden">
+            <TextOverflow :text="task.command" :title="task.type === TASK_TYPE.REPO ? '同步地址' : '执行命令'" class="truncate" />
+          </code>
           <div class="w-28 shrink-0 hidden md:flex flex-col items-start justify-center gap-1 overflow-hidden">
             <span v-if="task.trigger_type === TRIGGER_TYPE.BAIHU_STARTUP"
               class="text-[10px] leading-tight bg-blue-500/10 text-blue-500 px-2 py-1 rounded-md whitespace-nowrap font-medium">服务启动时</span>
@@ -477,38 +559,24 @@ watch(() => route.query.agent_id, (newVal: any) => {
               下: {{ task.next_run || '-' }}
             </span>
           </div>
-          <span class="w-8 flex justify-center shrink-0 cursor-pointer group max-sm:order-4 max-sm:ml-auto"
-            @click="toggleTask(task, !task.enabled)" :title="task.enabled ? '点击禁用' : '点击启用'">
-            <div v-if="task.enabled"
-              class="h-6 w-6 rounded-md bg-green-500/10 flex items-center justify-center group-hover:bg-green-500/20 transition-colors">
-              <Zap class="h-3.5 w-3.5 text-green-500 fill-green-500" />
-            </div>
-            <div v-else
-              class="h-6 w-6 rounded-md bg-muted flex items-center justify-center group-hover:bg-muted/80 transition-colors">
-              <ZapOff class="h-3.5 w-3.5 text-muted-foreground" />
-            </div>
-          </span>
-
-          <div class="w-full hidden max-sm:block max-sm:order-5 -my-0.5"></div>
-
-          <span class="w-auto sm:w-32 shrink-0 flex justify-end sm:justify-center gap-1 max-sm:order-7 max-sm:mt-1">
-            <Button variant="ghost" size="icon" class="h-6 w-6 sm:h-7 sm:w-7" @click="runTask(task.id)" title="执行"
+          <span class="w-36 shrink-0 flex justify-center gap-1">
+            <Button variant="ghost" size="icon" class="h-7 w-7" @click="runTask(task.id)" title="执行"
               :disabled="executingTaskId === task.id">
-              <Loader2 v-if="executingTaskId === task.id" class="h-3 w-3 sm:h-3.5 sm:w-3.5 animate-spin" />
-              <Play v-else class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <Loader2 v-if="executingTaskId === task.id" class="h-3.5 w-3.5 animate-spin" />
+              <Play v-else class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" class="h-6 w-6 sm:h-7 sm:w-7" @click="viewLogs(task.id)" title="日志">
-              <ScrollText class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            <Button variant="ghost" size="icon" class="h-7 w-7" @click="viewLogs(task.id)" title="日志">
+              <ScrollText class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" class="h-6 w-6 sm:h-7 sm:w-7" @click="openEdit(task)" title="编辑">
-              <Pencil class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            <Button variant="ghost" size="icon" class="h-7 w-7" @click="openEdit(task)" title="编辑">
+              <Pencil class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" class="h-6 w-6 sm:h-7 sm:w-7" @click="duplicateTask(task)" title="克隆">
-              <Copy class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+            <Button variant="ghost" size="icon" class="h-7 w-7" @click="duplicateTask(task)" title="克隆">
+              <Copy class="h-3.5 w-3.5" />
             </Button>
-            <Button variant="ghost" size="icon" class="h-6 w-6 sm:h-7 sm:w-7 text-destructive"
+            <Button variant="ghost" size="icon" class="h-7 w-7 text-destructive"
               @click="confirmDelete(task.id)" title="删除">
-              <Trash2 class="h-3 w-3 sm:h-3.5 sm:w-3.5" />
+              <Trash2 class="h-3.5 w-3.5" />
             </Button>
           </span>
         </div>

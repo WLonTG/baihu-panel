@@ -127,11 +127,11 @@ const selectedLog = computed(() => logs.value.find((l: AppLog) => l.id === selec
 function getLevelBadgeClass(level: string) {
     switch (level) {
         case LOG_LEVEL.INFO:
-            return 'bg-blue-500/10 text-blue-700 border-blue-200/50'
+            return 'bg-blue-500/15 text-blue-500 border-blue-500/30'
         case LOG_LEVEL.WARNING:
-            return 'bg-yellow-500/10 text-yellow-700 border-yellow-200/50'
+            return 'bg-amber-500/15 text-amber-500 border-amber-500/30'
         case LOG_LEVEL.ERROR:
-            return 'bg-red-500/10 text-red-700 border-red-200/50'
+            return 'bg-red-500/15 text-red-500 border-red-500/30'
         default:
             return 'bg-secondary text-secondary-foreground border-transparent'
     }
@@ -217,34 +217,63 @@ function onDialogClose(open: boolean) {
             </AlertDialog>
         </div>
 
-        <div class="rounded-lg border bg-card overflow-x-auto">
+        <div class="rounded-lg border bg-card overflow-hidden">
+            <!-- 大屏表头 -->
             <div
-                class="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 border-b bg-muted/50 text-xs sm:text-sm text-muted-foreground font-medium sm:min-w-[700px]">
-                <span class="w-12 sm:w-16 shrink-0">级别</span>
+                class="hidden sm:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+                <span class="w-16 shrink-0 pl-1">序号</span>
+                <span class="w-12 sm:w-16 shrink-0 text-center">级别</span>
                 <span class="w-40 sm:w-56 shrink-0">事件标题</span>
-                <span class="hidden sm:flex sm:flex-1">详情内容</span>
-                <span class="shrink-0 w-24 sm:w-40 sm:text-right">发生时间</span>
+                <span class="flex-1 min-w-0">详情内容</span>
+                <span class="w-40 shrink-0 text-right">发生时间</span>
             </div>
 
-            <div class="divide-y sm:min-w-[700px]">
+            <!-- 列表 -->
+            <div class="divide-y">
                 <div v-if="logs.length === 0 && !loading" class="text-sm text-muted-foreground text-center py-8">
                     暂无系统事件
                 </div>
-                <div v-for="log in logs" :key="log.id"
-                    class="flex items-center gap-2 sm:gap-4 px-3 sm:px-4 py-2 hover:bg-muted/50 transition-colors cursor-pointer group"
+
+                <!-- 小屏卡片布局 -->
+                <div v-for="(log, index) in logs" :key="`mobile-${log.id}`"
+                    class="sm:hidden p-3 hover:bg-muted/50 transition-colors cursor-pointer group"
                     :class="[selectedLogId === log.id && 'bg-accent/50']" @click="showDetail(log)">
+                    <div class="flex items-start justify-between mb-2">
+                        <div class="flex items-center gap-2 flex-1 min-w-0 mr-2">
+                            <span class="text-xs text-muted-foreground shrink-0 tabular-nums">#{{ total - (filters.page - 1) * pageSize - index }}</span>
+                            <component :is="getLevelIcon(log.level)" :class="['h-4 w-4 shrink-0',
+                                log.level === LOG_LEVEL.INFO ? 'text-blue-500' :
+                                    log.level === LOG_LEVEL.WARNING ? 'text-yellow-500' : 'text-red-500']" />
+                            <span class="font-medium text-sm truncate" :title="log.title">{{ log.title }}</span>
+                        </div>
+                    </div>
+                    <div class="bg-muted/30 rounded px-2 py-1.5 mb-2">
+                        <div class="text-muted-foreground text-xs truncate">
+                            {{ log.content || '-' }}
+                        </div>
+                    </div>
+                    <div class="text-[10px] text-muted-foreground text-right tabular-nums">
+                        {{ formatDate(log.created_at) }}
+                    </div>
+                </div>
+
+                <!-- 大屏行布局 -->
+                <div v-for="(log, index) in logs" :key="`desktop-${log.id}`"
+                    class="hidden sm:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors cursor-pointer group"
+                    :class="[selectedLogId === log.id && 'bg-accent/50']" @click="showDetail(log)">
+                    <span class="w-16 shrink-0 text-muted-foreground text-sm tabular-nums pl-1">#{{ total - (filters.page - 1) * pageSize - index }}</span>
                     <span class="w-12 sm:w-16 shrink-0 flex justify-center">
                         <component :is="getLevelIcon(log.level)" :class="['h-4 w-4',
                             log.level === LOG_LEVEL.INFO ? 'text-blue-500' :
                                 log.level === LOG_LEVEL.WARNING ? 'text-yellow-500' : 'text-red-500']" />
                     </span>
-                    <span class="w-40 sm:w-56 shrink-0 font-medium text-xs sm:text-sm truncate" :title="log.title">{{
+                    <span class="w-40 sm:w-56 shrink-0 font-medium text-sm truncate" :title="log.title">{{
                         log.title }}</span>
-                    <span class="hidden sm:flex sm:flex-1 text-xs sm:text-sm text-muted-foreground truncate"
+                    <span class="flex-1 min-w-0 text-sm text-muted-foreground truncate"
                         :title="log.content">
                         {{ log.content || '-' }}
                     </span>
-                    <span class="shrink-0 w-24 sm:w-40 sm:text-right text-xs text-muted-foreground">
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
                         {{ formatDate(log.created_at) }}
                     </span>
                 </div>
@@ -259,10 +288,10 @@ function onDialogClose(open: boolean) {
                     <div class="flex items-center justify-between pr-8">
                         <DialogTitle>事件详情</DialogTitle>
                         <Badge variant="outline" :class="[
-                            'px-2 py-0.5 text-[10px] font-bold rounded-full border shadow-sm',
+                            'px-2 py-0.5 text-[10px] font-bold rounded-md border shadow-sm',
                             selectedLog ? getLevelBadgeClass(selectedLog.level) : ''
                         ]">
-                            <div class="flex items-center gap-1.5 uppercase tracking-wider">
+                            <div class="flex items-center gap-1 uppercase tracking-tighter">
                                 <component :is="getLevelIcon(selectedLog?.level || 'info')" class="h-3 w-3" />
                                 <span>{{ selectedLog?.level || 'INFO' }}</span>
                             </div>
@@ -273,11 +302,11 @@ function onDialogClose(open: boolean) {
                 <div class="flex-1 overflow-y-auto">
                     <div class="px-6 py-4 border-b space-y-3 bg-card">
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-muted-foreground">标题</span>
-                            <span class="font-medium text-foreground">{{ detailDialogProps.title }}</span>
+                            <span class="text-muted-foreground font-medium">标题</span>
+                            <span class="font-bold text-foreground">{{ detailDialogProps.title }}</span>
                         </div>
                         <div class="flex justify-between items-center text-sm">
-                            <span class="text-muted-foreground">发生时间</span>
+                            <span class="text-muted-foreground font-medium">发生时间</span>
                             <span class="font-mono text-xs text-muted-foreground">{{ selectedLog ?
                                 formatDate(selectedLog.created_at) : '-' }}</span>
                         </div>
@@ -285,7 +314,7 @@ function onDialogClose(open: boolean) {
 
                     <div class="flex flex-col min-h-0 bg-muted/5">
                         <div
-                            class="px-6 py-2.5 text-xs font-semibold text-muted-foreground border-b bg-muted/10 uppercase tracking-wider">
+                            class="px-6 py-2.5 text-[10px] font-bold text-muted-foreground border-b bg-muted/10 uppercase tracking-widest">
                             内容详情
                         </div>
                         <div class="p-6">
@@ -298,7 +327,7 @@ function onDialogClose(open: boolean) {
 
                         <template v-if="detailDialogProps.error">
                             <div
-                                class="px-6 py-2.5 text-xs font-semibold uppercase tracking-wider border-y bg-muted/10 text-muted-foreground border-border/60">
+                                class="px-6 py-2.5 text-[10px] font-bold uppercase tracking-widest border-y bg-muted/10 text-muted-foreground border-border/60">
                                 错误信息
                             </div>
                             <div class="p-6">

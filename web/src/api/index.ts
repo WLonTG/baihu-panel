@@ -275,7 +275,9 @@ export const api = {
     listTokens: () => request<AgentToken[]>('/agents/tokens'),
     createToken: (data: { remark?: string; max_uses?: number; expires_at?: string }) =>
       request<AgentToken>('/agents/tokens', { method: 'POST', body: JSON.stringify(data) }),
-    deleteToken: (id: string) => request('/agents/tokens/' + id, { method: 'DELETE' })
+    deleteToken: (id: string) => request('/agents/tokens/' + id, { method: 'DELETE' }),
+    updateToken: (id: string, data: { remark?: string; max_uses?: number; expires_at?: string }) =>
+      request<AgentToken>('/agents/tokens/' + id, { method: 'PUT', body: JSON.stringify(data) })
   },
   mise: {
     list: () => request<MiseLanguage[]>('/mise/ls'),
