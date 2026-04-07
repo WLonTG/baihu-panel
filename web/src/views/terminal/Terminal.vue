@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, onUnmounted } from 'vue'
 import { Button } from '@/components/ui/button'
 import { RefreshCw, Info } from 'lucide-vue-next'
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover'
@@ -8,14 +8,27 @@ import { api } from '@/api'
 
 const terminalRef = ref<InstanceType<typeof XTerminal> | null>(null)
 const cmds = ref<{ name: string, description: string }[]>([])
+const windowWidth = ref(window.innerWidth)
+const updateWidth = () => { windowWidth.value = window.innerWidth }
 
 onMounted(async () => {
+  window.addEventListener('resize', updateWidth)
   try {
     const res = await api.terminal.cmds()
     cmds.value = res
   } catch (error) {
     console.error('Failed to load terminal commands', error)
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('resize', updateWidth)
+})
+
+const terminalFontSize = computed(() => {
+  if (windowWidth.value < 640) return 11
+  if (windowWidth.value < 1024) return 12
+  return 13
 })
 
 const isReconnecting = ref(false)
@@ -89,7 +102,7 @@ function handleStatusChange(status: any) {
       </div>
     </div>
     <div class="flex-1 border border-[#3c3c3c] border-t-0 rounded-b-md overflow-hidden bg-[#1e1e1e]">
-      <XTerminal ref="terminalRef" :font-size="13" @status-change="handleStatusChange" />
+      <XTerminal ref="terminalRef" :font-size="terminalFontSize" @status-change="handleStatusChange" />
     </div>
   </div>
 </template>

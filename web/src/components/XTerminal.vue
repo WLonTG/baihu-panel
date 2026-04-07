@@ -36,6 +36,13 @@ let historyIndex = -1
 
 const statusMessage = ref<{ text: string; type: 'success' | 'error' | 'info' } | null>(null)
 
+watch(() => props.fontSize, (newVal) => {
+  if (terminal && newVal) {
+    terminal.options.fontSize = newVal
+    handleResize()
+  }
+})
+
 watch(statusMessage, (newVal) => {
   emit('status-change', newVal)
 })
@@ -65,7 +72,8 @@ function initTerminal(forceConnect = false) {
   terminal = new Terminal({
     cursorBlink: true,
     fontSize: props.fontSize,
-    fontFamily: 'Consolas, Monaco, monospace',
+    lineHeight: 1.15,
+    fontFamily: 'Consolas, Monaco, "Courier New", monospace',
     theme: {
       background: '#1e1e1e',
       foreground: '#d4d4d4',
