@@ -168,16 +168,16 @@ function onDialogClose(open: boolean) {
 
 <template>
     <div class="space-y-4">
-        <div class="flex items-center justify-between gap-2">
-            <div class="flex items-center gap-2">
-                <div class="relative flex-1 sm:flex-none">
-                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input v-model="filters.keyword" placeholder="搜索标题或内容..." class="h-9 pl-9 w-full sm:w-56 text-sm"
+        <div class="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full">
+            <div class="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                <div class="relative w-full sm:w-60 group">
+                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input v-model="filters.keyword" placeholder="搜索标题或内容..." class="h-9 pl-9 w-full text-sm bg-muted/20 border-muted-foreground/10 focus:bg-background"
                         @input="handleSearch" />
                 </div>
-                <div class="relative flex-1 sm:flex-none">
+                <div class="relative flex-1 sm:flex-none sm:w-28">
                     <Select :model-value="filters.level" @update:model-value="handleLevelChange">
-                        <SelectTrigger class="h-9 w-full sm:w-28 text-sm">
+                        <SelectTrigger class="h-9 w-full text-sm bg-muted/20 border-muted-foreground/10">
                             <SelectValue placeholder="级别" />
                         </SelectTrigger>
                         <SelectContent>
@@ -188,17 +188,16 @@ function onDialogClose(open: boolean) {
                         </SelectContent>
                     </Select>
                 </div>
-                <Button variant="outline" size="icon" class="h-9 w-9 shrink-0" @click="fetchLogs" :disabled="loading"
+                <Button variant="outline" size="icon" class="h-9 w-9 shrink-0 sm:flex" @click="fetchLogs" :disabled="loading"
                     title="刷新">
                     <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
                 </Button>
             </div>
             <AlertDialog :open="showClearConfirm" @update:open="showClearConfirm = $event">
                 <Button variant="outline"
-                    class="h-9 px-4 shrink-0 text-sm text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20"
+                    class="h-9 px-4 shrink-0 text-sm text-destructive hover:bg-destructive/10 hover:text-destructive border-destructive/20 w-full sm:w-auto"
                     @click="showClearConfirm = true">
-                    <Trash2 class="h-4 w-4 sm:mr-2" /> <span class="hidden sm:inline"
-                        style="padding-left: 2px;">清空记录</span>
+                    <Trash2 class="h-4 w-4 mr-2" /> <span>清空记录</span>
                 </Button>
                 <AlertDialogContent>
                     <AlertDialogHeader>
@@ -218,24 +217,29 @@ function onDialogClose(open: boolean) {
         </div>
 
         <div class="rounded-lg border bg-card overflow-hidden">
-            <!-- 大屏表头 -->
-            <div
-                class="hidden sm:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+            <!-- ========== 1. 大屏表头 (Large >= 1024px) ========== -->
+            <div class="hidden lg:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
                 <span class="w-16 shrink-0 pl-1">序号</span>
-                <span class="w-12 sm:w-16 shrink-0 text-center">级别</span>
-                <span class="w-40 sm:w-56 shrink-0">事件标题</span>
+                <span class="w-56 shrink-0 px-2 pl-8">事件信息</span>
+                <span class="flex-1 min-w-0 px-2">详情内容</span>
+                <span class="w-40 shrink-0 text-right">发生时间</span>
+            </div>
+
+            <!-- ========== 2. 中屏表头 (Medium 640px - 1024px) ========== -->
+            <div class="hidden sm:flex lg:hidden items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+                <span class="w-48 shrink-0">事件信息</span>
                 <span class="flex-1 min-w-0">详情内容</span>
                 <span class="w-40 shrink-0 text-right">发生时间</span>
             </div>
 
-            <!-- 列表 -->
+            <!-- 列表内容 -->
             <div class="divide-y">
                 <div v-if="logs.length === 0 && !loading" class="text-sm text-muted-foreground text-center py-8">
                     暂无系统事件
                 </div>
 
-                <!-- 小屏卡片布局 -->
-                <div v-for="(log, index) in logs" :key="`mobile-${log.id}`"
+                <!-- ========== 1. 小屏布局 (Small < 640px) - 用户调好 ========== -->
+                <div v-for="(log, index) in logs" :key="`small-${log.id}`"
                     class="sm:hidden p-3 hover:bg-muted/50 transition-colors cursor-pointer group"
                     :class="[selectedLogId === log.id && 'bg-accent/50']" @click="showDetail(log)">
                     <div class="flex items-start justify-between mb-2">
@@ -257,23 +261,39 @@ function onDialogClose(open: boolean) {
                     </div>
                 </div>
 
-                <!-- 大屏行布局 -->
-                <div v-for="(log, index) in logs" :key="`desktop-${log.id}`"
-                    class="hidden sm:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors cursor-pointer group"
+                <!-- ========== 2. 中屏布局 (Medium 640px - 1024px) - 新抽取优化 ========== -->
+                <div v-for="log in logs" :key="`medium-${log.id}`"
+                    class="hidden sm:flex lg:hidden items-center gap-4 px-4 py-2.5 hover:bg-muted/50 transition-colors cursor-pointer group"
                     :class="[selectedLogId === log.id && 'bg-accent/50']" @click="showDetail(log)">
-                    <span class="w-16 shrink-0 text-muted-foreground text-sm tabular-nums pl-1">#{{ total - (filters.page - 1) * pageSize - index }}</span>
-                    <span class="w-12 sm:w-16 shrink-0 flex justify-center">
-                        <component :is="getLevelIcon(log.level)" :class="['h-4 w-4',
+                    <div class="w-48 shrink-0 flex items-center gap-3 min-w-0 font-medium text-sm">
+                        <component :is="getLevelIcon(log.level)" :class="['h-3.5 w-3.5 shrink-0 opacity-80',
                             log.level === LOG_LEVEL.INFO ? 'text-blue-500' :
                                 log.level === LOG_LEVEL.WARNING ? 'text-yellow-500' : 'text-red-500']" />
+                        <span class="truncate" :title="log.title">{{ log.title }}</span>
+                    </div>
+                    <span class="flex-1 min-w-0 text-sm text-muted-foreground line-clamp-1" :title="log.content">
+                        {{ log.content || '-' }}
                     </span>
-                    <span class="w-40 sm:w-56 shrink-0 font-medium text-sm truncate" :title="log.title">{{
-                        log.title }}</span>
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums opacity-60">
+                        {{ formatDate(log.created_at) }}
+                    </span>
+                </div>
+
+                <div v-for="(log, index) in logs" :key="`large-${log.id}`"
+                    class="hidden lg:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors cursor-pointer group"
+                    :class="[selectedLogId === log.id && 'bg-accent/50']" @click="showDetail(log)">
+                    <span class="w-16 shrink-0 text-muted-foreground text-sm tabular-nums pl-1">#{{ total - (filters.page - 1) * pageSize - index }}</span>
+                    <div class="w-56 shrink-0 flex items-center gap-3 min-w-0 font-medium text-sm">
+                        <component :is="getLevelIcon(log.level)" :class="['h-4 w-4 shrink-0 opacity-80',
+                            log.level === LOG_LEVEL.INFO ? 'text-blue-500' :
+                                log.level === LOG_LEVEL.WARNING ? 'text-yellow-500' : 'text-red-500']" />
+                        <span class="truncate" :title="log.title">{{ log.title }}</span>
+                    </div>
                     <span class="flex-1 min-w-0 text-sm text-muted-foreground truncate"
                         :title="log.content">
                         {{ log.content || '-' }}
                     </span>
-                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums">
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums opacity-60">
                         {{ formatDate(log.created_at) }}
                     </span>
                 </div>

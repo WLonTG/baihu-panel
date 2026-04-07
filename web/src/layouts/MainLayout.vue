@@ -155,16 +155,18 @@ onMounted(() => {
       <main class="flex-1 flex flex-col min-w-0 relative">
         <!-- Top Navigation Bar -->
         <header class="h-14 border-b border-slate-200/60 dark:border-white/10 bg-background flex items-center justify-between px-4 lg:px-6 shrink-0 sticky top-0 z-30">
-          <div class="flex items-center gap-3 flex-1 min-w-0">
+          <div class="flex items-center gap-2 sm:gap-3 flex-1 min-w-0 mr-4">
             <Button variant="ghost" size="icon" class="h-9 w-9 lg:hidden shrink-0" @click="mobileMenuOpen = true">
               <Menu class="h-5 w-5 text-muted-foreground" />
             </Button>
-            <span class="text-sm text-muted-foreground truncate" :title="sentence">
-              <span class="hidden sm:inline">{{ sentence }}</span>
-              <span class="sm:hidden">{{ sentenceContent }}</span>
-            </span>
+            <div class="flex flex-col sm:flex-row sm:items-baseline sm:gap-2 truncate">
+              <span class="text-sm text-muted-foreground truncate font-medium" :title="sentence">
+                <span class="hidden sm:inline">{{ sentence }}</span>
+                <span class="sm:hidden">{{ sentenceContent }}</span>
+              </span>
+            </div>
           </div>
-          <div class="flex items-center gap-3">
+          <div class="flex items-center gap-1 sm:gap-2.5 shrink-0">
             <SystemNotice />
             <ThemeToggle />
           </div>

@@ -108,42 +108,46 @@ onMounted(loadLogs)
 
 <template>
     <div class="space-y-4">
-        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div class="flex items-center gap-2">
-                <div class="relative flex-1 sm:flex-none">
-                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                    <Input v-model="filterUsername" placeholder="搜索用户名..." class="h-9 pl-9 w-full sm:w-56 text-sm"
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 w-full">
+            <div class="flex items-center gap-2 w-full sm:w-auto sm:ml-auto">
+                <div class="relative w-full sm:w-60 group">
+                    <Search class="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
+                    <Input v-model="filterUsername" placeholder="搜索用户名..." class="h-9 pl-9 w-full text-sm bg-muted/20 border-muted-foreground/10 focus:bg-background"
                         @input="handleSearch" />
                 </div>
-                <div class="flex items-center gap-2">
-                    <Button variant="outline" size="icon" class="h-9 w-9 shrink-0" @click="loadLogs" :disabled="loading"
-                        title="刷新">
-                        <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
-                    </Button>
-                </div>
+                <Button variant="outline" size="icon" class="h-9 w-9 shrink-0" @click="loadLogs" :disabled="loading"
+                    title="刷新">
+                    <RefreshCw class="h-4 w-4" :class="{ 'animate-spin': loading }" />
+                </Button>
             </div>
         </div>
 
         <div class="rounded-lg border bg-card overflow-hidden">
-            <!-- 大屏表头 -->
-            <div
-                class="hidden sm:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+            <!-- ========== 1. 大屏表头 (Large >= 1024px) ========== -->
+            <div class="hidden lg:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
                 <span class="w-16 shrink-0 pl-1">序号</span>
-                <span class="w-24 sm:w-32 shrink-0">用户名</span>
-                <span class="w-32 sm:w-40 shrink-0">IP 地址</span>
-                <span class="w-16 shrink-0 text-center">状态</span>
+                <span class="w-32 shrink-0">用户信息</span>
+                <span class="w-40 shrink-0">IP 地址</span>
                 <span class="flex-1 min-w-0">User Agent</span>
                 <span class="w-40 shrink-0 text-right">登录时间</span>
             </div>
 
-            <!-- 列表 -->
-            <div class="divide-y">
+            <!-- ========== 2. 中屏表头 (Medium 640px - 1024px) ========== -->
+            <div class="hidden sm:flex lg:hidden items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
+                <span class="w-24 shrink-0">用户信息</span>
+                <span class="w-32 shrink-0">IP 地址</span>
+                <span class="flex-1 min-w-0">设备信息 (UA)</span>
+                <span class="w-40 shrink-0 text-right">登录时间</span>
+            </div>
+
+            <!-- 列表内容 -->
+            <div class="divide-y text-sm">
                 <div v-if="logs.length === 0" class="text-sm text-muted-foreground text-center py-8">
                     暂无登录日志
                 </div>
 
-                <!-- 小屏卡片布局 -->
-                <div v-for="(log, index) in logs" :key="`mobile-${log.id}`"
+                <!-- ========== 1. 小屏布局 (Small < 640px) - 用户调好 ========== -->
+                <div v-for="(log, index) in logs" :key="`small-${log.id}`"
                     class="sm:hidden p-3 hover:bg-muted/50 transition-colors">
                     <div class="flex items-start justify-between mb-3 border-b border-border/40 pb-2">
                         <div class="flex items-center gap-2 flex-1 min-w-0 mr-2">
@@ -169,24 +173,41 @@ onMounted(loadLogs)
                     </div>
                 </div>
 
-                <!-- 大屏行布局 -->
-                <div v-for="(log, index) in logs" :key="`desktop-${log.id}`"
-                    class="hidden sm:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors">
-                    <span class="w-16 shrink-0 text-muted-foreground text-sm pl-1">#{{ total - (currentPage - 1) * pageSize - index }}</span>
-                    <span class="w-24 sm:w-32 shrink-0 font-medium text-sm truncate">{{ log.username }}</span>
-                    <div class="w-32 sm:w-40 shrink-0">
-                        <code
-                            class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded truncate cursor-pointer hover:bg-muted/80 transition-colors inline-block"
+                <div v-for="log in logs" :key="`medium-${log.id}`"
+                    class="hidden sm:flex lg:hidden items-center gap-4 px-4 py-2.5 hover:bg-muted/50 transition-colors">
+                    <div class="w-24 shrink-0 flex items-center gap-2 min-w-0">
+                        <span :class="['h-1.5 w-1.5 rounded-full shrink-0', log.status === 'success' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]']"></span>
+                        <span class="font-medium truncate text-sm">{{ log.username }}</span>
+                    </div>
+                    <div class="w-32 shrink-0">
+                        <code class="text-[11px] text-muted-foreground bg-muted/50 px-1.5 py-0.5 rounded truncate cursor-pointer hover:bg-muted/80 transition-colors inline-block tabular-nums"
                             @click="showIpInfo(log.ip)">{{ log.ip }}</code>
                     </div>
-                    <span class="w-16 shrink-0 flex justify-center">
-                        <span
-                            :class="['h-2 w-2 rounded-full', log.status === 'success' ? 'bg-green-500' : 'bg-red-500']"></span>
+                    <span class="flex-1 min-w-0 text-xs text-muted-foreground line-clamp-1">
+                        {{ log.user_agent || '-' }}
                     </span>
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums opacity-60">
+                        {{ log.created_at }}
+                    </span>
+                </div>
+
+                <!-- ========== 3. 大屏布局 (Large >= 1024px) - 用户调好 ========== -->
+                <div v-for="(log, index) in logs" :key="`large-${log.id}`"
+                    class="hidden lg:flex items-center gap-4 px-4 py-2 hover:bg-muted/50 transition-colors">
+                    <span class="w-16 shrink-0 text-muted-foreground text-sm pl-1">#{{ total - (currentPage - 1) * pageSize - index }}</span>
+                    <div class="w-32 shrink-0 flex items-center gap-2 min-w-0 font-medium text-sm">
+                        <span :class="['h-2 w-2 rounded-full shrink-0', log.status === 'success' ? 'bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.3)]' : 'bg-red-500 shadow-[0_0_8px_rgba(239,68,68,0.3)]']"></span>
+                        <span class="truncate">{{ log.username }}</span>
+                    </div>
+                    <div class="w-40 shrink-0">
+                        <code
+                            class="text-xs text-muted-foreground bg-muted px-2 py-1 rounded truncate cursor-pointer hover:bg-muted/80 transition-colors inline-block tabular-nums"
+                            @click="showIpInfo(log.ip)">{{ log.ip }}</code>
+                    </div>
                     <span class="flex-1 min-w-0 text-xs text-muted-foreground truncate">
                         <TextOverflow :text="log.user_agent || '-'" title="User Agent" />
                     </span>
-                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground">{{ log.created_at }}</span>
+                    <span class="w-40 shrink-0 text-right text-xs text-muted-foreground tabular-nums opacity-60">{{ log.created_at }}</span>
                 </div>
             </div>
             <!-- 分页 -->
