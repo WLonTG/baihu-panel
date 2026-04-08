@@ -72,7 +72,7 @@ func (ts *TaskService) GetTasksWithPagination(page, pageSize int, name string, a
 
 	query := database.DB.Model(&models.Task{})
 	if name != "" {
-		query = query.Where("name LIKE ?", "%"+name+"%")
+		query = query.Where("name LIKE ? OR remark LIKE ?", "%"+name+"%", "%"+name+"%")
 	}
 	if tags != "" {
 		query = query.Where("tags LIKE ?", "%"+tags+"%")

@@ -108,7 +108,10 @@ const cleanConfig = computed(() => {
 
 const filteredEnvVars = computed(() => {
   return allEnvVars.value.filter((env: EnvVar) => {
-    const matchSearch = !envSearchQuery.value || env.name.toLowerCase().includes(envSearchQuery.value.toLowerCase())
+    const q = envSearchQuery.value.toLowerCase()
+    const matchSearch = !q || 
+      env.name.toLowerCase().includes(q) || 
+      (env.remark && env.remark.toLowerCase().includes(q))
     const notSelected = !selectedEnvIds.value.includes(env.id)
     return matchSearch && notSelected
   })
