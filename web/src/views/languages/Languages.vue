@@ -412,7 +412,7 @@ onMounted(() => {
                         </div>
                         <template v-else>
                             <div v-for="(lang, index) in filteredLanguages" :key="lang.plugin + lang.version"
-                                class="flex flex-row items-center px-2 sm:px-4 py-2.5 sm:py-3 hover:bg-muted/5 transition-colors gap-2 sm:gap-4 relative group border-l-2 border-transparent hover:border-primary/40">
+                                class="flex flex-row items-center px-2 sm:px-4 py-2.5 sm:py-3 hover:bg-muted/30 transition-colors gap-2 sm:gap-4 relative group">
                                 <div class="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
                                     <div class="flex items-center justify-center w-6 sm:w-8 shrink-0">
                                         <span
