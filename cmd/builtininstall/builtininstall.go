@@ -58,23 +58,25 @@ func installForLanguage(lang, pkgPath, installBaseCmd string) {
 	for _, v := range versions {
 		logger.Infof("[Builtin] 正在为 %s@%s 安装内建包...", lang, v)
 		
-		var cmdStr string
+		var subCmdArgs []string
 		if lang == "node" {
-			// npm install 不需要 -e
-			cmdStr = fmt.Sprintf("npm install %s", pkgPath)
+			// 使用 npm i -g 进行全局安装
+			subCmdArgs = []string{"npm", "i", "-g", pkgPath}
 		} else {
-			// python 建议使用 -e (editable) 或直接安装
-			cmdStr = fmt.Sprintf("pip install -e %s", pkgPath)
+			// python 使用 pip install -e
+			subCmdArgs = []string{"pip", "install", "-e", pkgPath}
 		}
 
-		// 使用 mise exec 跨版本执行
-		fullCmd := utils.BuildMiseCommandSimple(cmdStr, lang, v)
-		
+		// 构建参数列表: [mise, exec, lang@v, --, npm, i, -g, path]
+		fullArgs := utils.BuildMiseCommandArgsSimple(subCmdArgs, lang, v)
+
 		var cmd *exec.Cmd
 		if runtime.GOOS == "windows" {
-			cmd = exec.Command("cmd", "/c", fullCmd)
+			// Windows 下仍建议通过 cmd /c 调用
+			cmd = exec.Command("cmd", append([]string{"/c"}, fullArgs...)...)
 		} else {
-			cmd = exec.Command("sh", "-c", fullCmd)
+			// Linux 系统直接执行参数切片，更稳健
+			cmd = exec.Command(fullArgs[0], fullArgs[1:]...)
 		}
 
 		out, err := cmd.CombinedOutput()
@@ -82,6 +84,9 @@ func installForLanguage(lang, pkgPath, installBaseCmd string) {
 			logger.Errorf("[Builtin] 为 %s@%s 安装失败: %v\n输出: %s", lang, v, err, string(out))
 		} else {
 			logger.Infof("[Builtin] 为 %s@%s 安装成功", lang, v)
+			// 安装成功后尝试执行 reshim，确保命令生效
+			reshimCmd := exec.Command("mise", "reshim", lang)
+			reshimCmd.Run()
 		}
 	}
 }

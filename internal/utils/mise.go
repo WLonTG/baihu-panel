@@ -134,13 +134,33 @@ func ListMiseInstalledVersions(language string) ([]string, error) {
 		if v == "" {
 			continue
 		}
-		// mise ls 的输出类似:
-		// 3.12.1
-		// 3.11.5
-		// 我们取第一个字段即可
+		// mise ls 的输出可能包含状态标识或插件名，例:
+		// * 20.10.0 (active)
+		// node 18.17.0
 		fields := strings.Fields(v)
-		if len(fields) > 0 {
-			versions = append(versions, fields[0])
+		if len(fields) == 0 {
+			continue
+		}
+
+		startIdx := 0
+		// 跳过状态标识符
+		if fields[startIdx] == "*" || fields[startIdx] == "->" || fields[startIdx] == ">" {
+			startIdx++
+		}
+
+		if len(fields) <= startIdx {
+			continue
+		}
+
+		vstr := fields[startIdx]
+		// 如果第一个有效字段是插件名，则版本号在第二个字段
+		if vstr == language && len(fields) > startIdx+1 {
+			vstr = fields[startIdx+1]
+		}
+
+		// 确保解析出来的不是插件名
+		if vstr != "" && vstr != language {
+			versions = append(versions, vstr)
 		}
 	}
 	return versions, nil
