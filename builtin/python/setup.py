@@ -4,6 +4,6 @@ setup(
     name='baihu',
     version='1.0.0',
     description='Baihu Panel internal helper for Python',
-    packages=find_packages(),
+    packages=['baihu'],
     python_requires='>=3.6',
 )
