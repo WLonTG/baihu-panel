@@ -59,3 +59,7 @@ docs/public/swagger.yaml
 
 # OpenAPI
 openapi_docs/
+
+# Builtin SDK (Force Include)
+!builtin/
+!builtin/**

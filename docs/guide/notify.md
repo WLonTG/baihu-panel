@@ -43,6 +43,8 @@
 在使用助手库前，请确保您已经在任务设置的“环境变量”或“机密”中配置了以下两个同名 Key：
 - **BHPKG_NOTIFY_TOKEN**：进入「消息推送」->「脚本调用说明」标签，您可以直接复制此处的 Token（如未生成请先点击生成）。
 - **BHPKG_NOTIFY_CHANNEL**：进入「消息推送」->「渠道列表」标签，可以查看每个渠道对应的 **ID**。如果您希望使用默认渠道，也可直接在「脚本调用说明」页面的代码示例中找到默认 ID。
+- **BHPKG_NOTIFY_URL** (可选)：内建通知 API 的地址。默认为 `http://localhost:8052/api/v1/notify/send`。**如果您更改了容器内部的服务监听端口（如通过 `BH_SERVER_PORT`），则需要同步设置此变量为 `http://localhost:{您的端口}/api/v1/notify/send`。**
+
 
 #### 2. 环境初始化
 在开始编写脚本前，您需要在终端执行以下命令，为面板管理的所有语言环境安装 `baihu` 包：
@@ -73,6 +75,8 @@ baihu.notify("任务标题", "通知正文内容");
 ---
 
 ### 路径三：其他语言/高级调用 (原始 API)
+> [!IMPORTANT]
+> 以下示例中的端口均默认为 `8052`。如果您更改了容器内部的服务端口（通过 `BH_SERVER_PORT` 环境配置），请务必在调用时将 `8052` 替换为您的实际端口。
 
 如果您使用 Shell 或其他尚未提供助手库的语言，可以通过标准 HTTP POST 请求调用。
 
@@ -82,6 +86,8 @@ baihu.notify("任务标题", "通知正文内容");
 #### 2. 代码参考示例
 
 ##### Shell (Curl)
+> **注意**：如果更改了容器内部的服务端口，请将 `8052` 替换为实际端口，或直接使用环境变量 `BHPKG_NOTIFY_URL`。
+
 ```bash
 curl -X POST "http://localhost:8052/api/v1/notify/send" \
   -H "notify-token: 您的_NOTIFY_TOKEN" \
