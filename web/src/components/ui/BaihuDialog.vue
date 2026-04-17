@@ -64,13 +64,19 @@ const sizeClasses = {
           {{ title }}
         </DialogTitle>
         <!-- 描述 / 副标题插槽 (占满剩余宽度，截断溢出) -->
-        <div class="flex-1 min-w-0 overflow-hidden">
-          <DialogDescription v-if="description || $slots.description" class="truncate text-xs leading-none">
-            <slot name="description">{{ description }}</slot>
-          </DialogDescription>
-          <DialogDescription v-else class="sr-only">
-            {{ title || '提示对话框' }}
-          </DialogDescription>
+        <div class="flex-1 min-w-0 overflow-hidden flex items-center justify-between gap-2">
+          <div class="truncate">
+            <DialogDescription v-if="description || $slots.description" class="truncate text-xs leading-none">
+              <slot name="description">{{ description }}</slot>
+            </DialogDescription>
+            <DialogDescription v-else class="sr-only">
+              {{ title || '提示对话框' }}
+            </DialogDescription>
+          </div>
+          <!-- 额外扩展插槽 -->
+          <div v-if="$slots.extra" class="flex items-center shrink-0">
+            <slot name="extra" />
+          </div>
         </div>
         <!-- 关闭按钮 -->
         <DialogClose

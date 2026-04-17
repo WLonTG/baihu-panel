@@ -25,6 +25,7 @@ import {
   AlertDialogTitle,
 } from '@/components/ui/alert-dialog'
 import { useSiteSettings } from '@/composables/useSiteSettings'
+import BaihuDialog from '@/components/ui/BaihuDialog.vue'
 
 const props = defineProps<{
   filters: {
@@ -259,71 +260,72 @@ function onDialogClose(open: boolean) {
       <Pagination :total="total" :page="currentPage" @update:page="handlePageChange" />
     </div>
 
-    <Dialog v-model:open="detailDialogProps.open" @update:open="onDialogClose">
-      <DialogContent class="sm:max-w-2xl max-h-[90vh] flex flex-col p-0 overflow-hidden">
-        <DialogHeader class="px-6 py-4 border-b bg-muted/20">
-          <div class="flex items-center justify-between pr-8">
-            <DialogTitle>日志详情</DialogTitle>
-            <Badge variant="outline" :class="[
-              'px-2 py-0.5 text-[10px] font-bold rounded-md border shadow-sm transition-all duration-300',
-              selectedLog ? getStatusBadgeClass(selectedLog.status) : ''
-            ]">
-              <div class="flex items-center gap-1 uppercase tracking-tighter">
-                <Check v-if="selectedLog?.status === LOG_STATUS.SUCCESS" class="h-3 w-3" />
-                <X v-else class="h-3 w-3" />
-                <span>{{ selectedLog?.status === LOG_STATUS.SUCCESS ? 'Success' : 'Failed' }}</span>
-              </div>
+    <BaihuDialog v-model:open="detailDialogProps.open" title="日志详情" @update:open="onDialogClose">
+      <template #extra>
+        <Badge variant="outline" :class="[
+          'px-2 py-0.5 text-[10px] font-bold rounded-md border shadow-sm transition-all duration-300',
+          selectedLog ? getStatusBadgeClass(selectedLog.status) : ''
+        ]">
+          <div class="flex items-center gap-1 uppercase tracking-tighter">
+            <Check v-if="selectedLog?.status === LOG_STATUS.SUCCESS" class="h-3 w-3" />
+            <X v-else class="h-3 w-3" />
+            <span>{{ selectedLog?.status === LOG_STATUS.SUCCESS ? '发送成功' : '发送失败' }}</span>
+          </div>
+        </Badge>
+      </template>
+
+      <!-- 核心内容区 (依赖 BaihuDialog 自带的 p-6) -->
+      <div class="space-y-8">
+        <!-- 1. 基础信息列表 (扁平化布局) -->
+        <div class="grid grid-cols-1 gap-4 text-sm px-2">
+          <div class="flex justify-between items-center group cursor-default">
+            <span class="text-muted-foreground/60 font-medium">消息标题</span>
+            <span class="font-semibold text-foreground tracking-tight">{{ detailDialogProps.title }}</span>
+          </div>
+          <div v-if="selectedLog?.channel_name" class="flex justify-between items-center group cursor-default">
+            <span class="text-muted-foreground/60 font-medium">推送渠道</span>
+            <Badge variant="secondary" class="font-normal text-[11px] bg-muted/40 hover:bg-muted/60 transition-colors">
+              {{ selectedLog.channel_name }}
             </Badge>
           </div>
-        </DialogHeader>
-
-        <div class="flex-1 overflow-y-auto">
-          <!-- 基础信息区 -->
-          <div class="px-6 py-4 border-b space-y-3 bg-card">
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">标题</span>
-              <span class="font-medium text-foreground">{{ detailDialogProps.title }}</span>
-            </div>
-            <div v-if="selectedLog?.channel_name" class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">发送渠道</span>
-              <span class="font-medium text-foreground">{{ selectedLog.channel_name }}</span>
-            </div>
-            <div class="flex justify-between items-center text-sm">
-              <span class="text-muted-foreground">发生时间</span>
-              <span class="font-mono text-xs text-muted-foreground">{{ selectedLog ? formatDate(selectedLog.created_at)
-                : '-' }}</span>
-            </div>
-          </div>
-
-          <!-- 内容输出区 -->
-          <div class="flex flex-col min-h-0 bg-muted/5">
-            <div
-              class="px-6 py-2.5 text-xs font-semibold text-muted-foreground border-b bg-muted/10 uppercase tracking-wider">
-              推送内容
-            </div>
-            <div class="p-6">
-              <div v-if="detailDialogProps.content"
-                class="text-sm text-foreground bg-muted/20 p-5 rounded-xl border border-border/50 whitespace-pre-wrap break-all leading-relaxed shadow-sm" v-html="renderedContent">
-              </div>
-              <div v-else class="text-sm text-muted-foreground italic py-2">无推送内容</div>
-            </div>
-
-            <template v-if="detailDialogProps.error">
-              <div
-                class="px-6 py-2.5 text-xs font-semibold uppercase tracking-wider border-y bg-muted/10 text-muted-foreground border-border/60">
-                错误信息
-              </div>
-              <div class="p-6">
-                <div v-if="detailDialogProps.error"
-                  class="text-sm p-5 rounded-xl border whitespace-pre-wrap break-all leading-relaxed shadow-sm bg-muted/20 border-border/60 text-foreground">
-                  {{ detailDialogProps.error }}
-                </div>
-                <div v-else class="text-sm text-muted-foreground italic py-2">无错误信息</div>
-              </div>
-            </template>
+          <div class="flex justify-between items-center group cursor-default">
+            <span class="text-muted-foreground/60 font-medium">发送时间</span>
+            <span class="font-mono text-[11px] text-muted-foreground/80 tabular-nums">
+              {{ selectedLog ? formatDate(selectedLog.created_at) : '-' }}
+            </span>
           </div>
         </div>
-      </DialogContent>
-    </Dialog>
+
+        <!-- 2. 推送内容展示 -->
+        <div class="space-y-3">
+          <div class="flex items-center gap-2 px-2">
+            <div class="w-1 h-3.5 bg-primary/40 rounded-full" />
+            <span class="text-xs font-bold text-muted-foreground uppercase tracking-widest">推送内容</span>
+          </div>
+          <div class="relative group">
+            <!-- 装饰性背景，模拟高级卡片 -->
+            <div class="absolute -inset-0.5 bg-gradient-to-br from-primary/5 via-transparent to-primary/5 rounded-2xl blur opacity-20 group-hover:opacity-40 transition duration-500" />
+            <div v-if="detailDialogProps.content"
+              class="relative bg-background/50 dark:bg-muted/10 p-5 rounded-2xl border border-border/40 whitespace-pre-wrap break-all leading-relaxed shadow-[0_2px_15px_-3px_rgba(0,0,0,0.03)] text-[13px] text-foreground/90 font-medium"
+              v-html="renderedContent">
+            </div>
+            <div v-else class="relative bg-muted/20 p-6 rounded-2xl border border-dashed border-border/60 text-center text-sm text-muted-foreground">
+              此消息无标准推送内容
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. 错误信息 (仅当存在时展示) -->
+        <div v-if="detailDialogProps.error" class="space-y-3">
+          <div class="flex items-center gap-2 px-2">
+            <div class="w-1 h-3.5 bg-destructive/40 rounded-full" />
+            <span class="text-xs font-bold text-destructive/80 uppercase tracking-widest">错误报告</span>
+          </div>
+          <div class="bg-destructive/[0.03] p-5 rounded-2xl border border-destructive/10 text-[13px] text-destructive/90 font-mono leading-relaxed break-all">
+            {{ detailDialogProps.error }}
+          </div>
+        </div>
+      </div>
+    </BaihuDialog>
   </div>
 </template>

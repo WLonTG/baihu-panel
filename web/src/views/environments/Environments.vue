@@ -15,6 +15,16 @@ import { useSiteSettings } from '@/composables/useSiteSettings'
 import { Switch } from '@/components/ui/switch'
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ENV_TYPE } from '@/constants'
+import { format } from 'date-fns'
+
+function formatDate(dateStr?: string) {
+  if (!dateStr) return '-'
+  try {
+    return format(new Date(dateStr), 'yyyy-MM-dd HH:mm:ss')
+  } catch {
+    return dateStr
+  }
+}
 
 const { pageSize } = useSiteSettings()
 
@@ -292,9 +302,10 @@ onBeforeUnmount(() => {
       <div
         class="hidden sm:flex items-center gap-4 px-4 py-2 border-b bg-muted/20 text-sm text-muted-foreground font-medium">
         <span class="w-12 shrink-0 pl-1">序号</span>
-        <span class="w-32 sm:w-48 shrink-0">名称</span>
+        <span class="w-32 sm:w-40 shrink-0">名称</span>
         <span class="flex-1 min-w-0">值</span>
-        <span class="w-32 sm:w-48 shrink-0 hidden md:block">备注说明</span>
+        <span class="w-32 sm:w-40 shrink-0 hidden md:block">备注说明</span>
+        <span class="w-48 shrink-0 text-left hidden lg:block">创建时间</span>
         <span class="w-32 shrink-0 text-center">操作</span>
       </div>
 
@@ -336,6 +347,10 @@ onBeforeUnmount(() => {
               <span class="w-8 shrink-0 font-medium mt-0.5 opacity-70">备注:</span>
               <span class="flex-1 text-[11px] leading-relaxed">{{ env.remark }}</span>
             </div>
+            <div class="flex items-center gap-3">
+              <span class="w-8 shrink-0 font-medium opacity-70">创建:</span>
+              <span class="text-[10px] text-muted-foreground">{{ formatDate(env.created_at) }}</span>
+            </div>
           </div>
 
           <div class="flex items-center justify-end gap-1 pt-2 border-t">
@@ -364,8 +379,11 @@ onBeforeUnmount(() => {
           <span class="flex-1 min-w-0 text-muted-foreground truncate text-xs px-1">
             <TextOverflow :text="showValues[env.id] ? env.value : maskValue(env.value)" title="查看值" />
           </span>
-          <span class="w-32 sm:w-48 shrink-0 text-muted-foreground truncate text-sm hidden md:block">
+          <span class="w-32 sm:w-40 shrink-0 text-muted-foreground truncate text-sm hidden md:block">
             <TextOverflow :text="env.remark || '-'" title="备注描述" />
+          </span>
+          <span class="w-48 shrink-0 text-left text-muted-foreground tabular-nums text-[12px] opacity-70 hidden lg:block whitespace-nowrap">
+            {{ formatDate(env.created_at) }}
           </span>
           <div class="w-32 shrink-0 flex justify-center gap-1">
             <Button variant="ghost" size="icon" class="h-7 w-7 rounded-md transition-all"
