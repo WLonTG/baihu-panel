@@ -645,34 +645,34 @@ async function save() {
                     </div>
                   </div>
                   <div class="grid grid-cols-1 sm:grid-cols-4 items-center gap-3">
-                    <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-bold">随机延迟</Label>
+                    <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-semibold">随机延迟</Label>
                     <div class="sm:col-span-3 flex items-center gap-4">
                       <div class="flex items-center gap-2">
-                        <Input :model-value="form.random_range" @update:model-value="(v: string | number) => form.random_range = Number(v || 0)" type="number" :min="0" class="w-20 h-9 bg-muted/30 text-center font-bold" />
+                        <Input :model-value="form.random_range" @update:model-value="(v: string | number) => form.random_range = Number(v || 0)" type="number" :min="0" class="w-20 h-9 bg-muted/30 text-center font-semibold text-xs" />
                         <span class="text-xs font-semibold text-muted-foreground">秒</span>
                       </div>
                       <div class="flex-1 text-[11px] text-muted-foreground leading-snug p-2 rounded-lg bg-blue-500/5 border border-blue-500/10 italic">
-                        避免高频并发，在基准时间点后延迟 0~{{ form.random_range || 0 }}s
+                        基准时间后随机延迟 0~{{ form.random_range || 0 }}s
                       </div>
                     </div>
                   </div>
                 </template>
                 <div class="grid grid-cols-1 sm:grid-cols-4 items-center gap-3">
-                  <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-bold">失败策略</Label>
+                  <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-semibold">失败策略</Label>
                   <div class="sm:col-span-3 flex items-center gap-4">
                     <div class="flex items-center gap-2">
                        <span class="text-[11px] text-muted-foreground font-semibold">重试</span>
-                       <Input :model-value="form.retry_count" @update:model-value="(v: string | number) => form.retry_count = Number(v)" type="number" :min="0" class="w-16 h-9 bg-muted/30 text-center font-bold" />
+                       <Input :model-value="form.retry_count" @update:model-value="(v: string | number) => form.retry_count = Number(v)" type="number" :min="0" class="w-16 h-9 bg-muted/30 text-center font-semibold text-xs" />
                        <span class="text-[11px] text-muted-foreground font-semibold">次，间隔</span>
-                       <Input :model-value="form.retry_interval" @update:model-value="(v: string | number) => form.retry_interval = Number(v)" type="number" :min="0" class="w-16 h-9 bg-muted/30 text-center font-bold" />
+                       <Input :model-value="form.retry_interval" @update:model-value="(v: string | number) => form.retry_interval = Number(v)" type="number" :min="0" class="w-16 h-9 bg-muted/30 text-center font-semibold text-xs" />
                        <span class="text-[11px] text-muted-foreground font-semibold">秒</span>
                     </div>
                   </div>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-4 items-center gap-3">
-                  <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-bold">运行策略</Label>
+                  <Label class="sm:text-right text-xs text-foreground/70 uppercase tracking-wider font-semibold">运行策略</Label>
                   <div class="sm:col-span-3 flex items-center gap-3">
-                    <Input :model-value="form.timeout" @update:model-value="(v: string | number) => form.timeout = Number(v)" type="number" :min="0" class="w-20 h-9 bg-muted/30 text-center font-bold" />
+                    <Input :model-value="form.timeout" @update:model-value="(v: string | number) => form.timeout = Number(v)" type="number" :min="0" class="w-20 h-9 bg-muted/30 text-center font-semibold text-xs" />
                     <span class="text-[11px] font-semibold text-muted-foreground">分钟超时</span>
                   </div>
                 </div>
@@ -682,7 +682,10 @@ async function save() {
           </div>
         </ScrollArea>
         <div class="flex items-center justify-between px-6 py-4 bg-muted/20 border-t shrink-0 backdrop-blur-sm">
-          <p class="text-[10px] text-muted-foreground/50 italic">最后编辑于: {{ isEdit ? (form.updated_at || '刚才') : '现在' }}</p>
+          <div class="text-[10px] text-muted-foreground/40 italic flex flex-col leading-tight select-none pointer-events-none">
+            <span>最后编辑于:</span>
+            <span>{{ isEdit ? (form.updated_at || '刚才') : '现在' }}</span>
+          </div>
           <div class="flex gap-3">
             <Button variant="ghost" size="sm" class="hover:bg-muted font-medium text-xs px-6" @click="emit('update:open', false)">取消</Button>
             <Button size="sm" class="px-8 font-semibold text-xs shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90" @click="save">确定保存</Button>
